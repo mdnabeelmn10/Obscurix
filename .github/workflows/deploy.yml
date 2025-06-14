@@ -1,4 +1,4 @@
-name: Deploy Django App to EC2
+name: Deploy Backend to EC2
 
 on:
   push:
@@ -7,24 +7,23 @@ on:
 
 jobs:
   deploy:
-    name: Deploy on EC2
+    name: Deploy to EC2
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up SSH
+      - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@<EC2_PUBLIC_IP> << 'EOF'
-            cd ~/obscurix/backend
-            source venv/bin/activate
-            git pull origin main
-            pip install -r requirements.txt
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "
+            cd ~/obscurix/backend && \
+            git pull origin main && \
+            source venv/bin/activate && \
             sudo systemctl restart backend
-          EOF
+          "
