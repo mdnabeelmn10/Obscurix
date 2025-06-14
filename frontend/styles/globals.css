@@ -3,6 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --font-geist-sans: 'Geist', sans-serif;
+    --font-geist-mono: 'Geist Mono', monospace;
+
 }
 
 @theme inline {
@@ -19,8 +23,58 @@
   }
 }
 
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+@font-face {
+  font-family: "PowerGrotesk";
+  src: url("/fonts/PowerGrotesk-UltraBold.ttf") format("truetype");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "PowerGrotesk";
+  src: url("/fonts/PowerGrotesk-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+.font-pg {
+  font-family: "PowerGrotesk", Arial, sans-serif;
+}
+
+@keyframes scroll-news {
+  0% {
+    transform: translateY(0%);
+  }
+
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.animation-scroll-news {
+  animation: scroll-news 20s linear infinite;
+}
+
+.animation-scroll-news:hover {
+  animation-play-state: paused;
 }
