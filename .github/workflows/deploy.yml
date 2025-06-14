@@ -12,20 +12,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
       
-    - name: Setup SSH Key
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        
-    - name: Add SSH Known Hosts
+    - name: Setup SSH
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-        chmod 644 ~/.ssh/known_hosts
+        echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
         
     - name: Deploy via SSH
       run: |
-        ssh -o UserKnownHostsFile=~/.ssh/known_hosts ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
         set -e  # Exit on any error
         cd ~/obscurix/backend
         
