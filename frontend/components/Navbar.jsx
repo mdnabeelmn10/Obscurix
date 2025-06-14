@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const handleScroll = (id) => {
     const section = document.getElementById(id);
@@ -20,89 +21,80 @@ export default function Navbar() {
   const isDashboard = pathname === "/dashboard";
   const isHome = pathname === "/";
 
-  const headerClass = isDashboard
-    ? "w-full fixed top-0 z-50 bg-[#1d1f2f]/60 backdrop-blur-md text-white shadow-md"
-    : isHome
-    ? "w-full fixed top-0 z-50 bg-[#12032f]/90 backdrop-blur-lg text-white shadow-lg"
-    : "w-full fixed top-0 z-50 bg-[#0e0e0e] text-white shadow-md";
+  const wrapperStyle = "w-full fixed top-0 z-50 font-geist"; // fixed top
+  const ovalStyle =
+    "hidden md:flex justify-between items-center backdrop-blur-md bg-[#1d1f2f]/70 rounded-full px-10 py-4 mx-auto mt-4 w-fit shadow-md border border-[#32214c]";
 
-  const logoClass = `text-2xl font-extrabold tracking-wider cursor-pointer ${
-    isDashboard ? "text-[#00ffa3]" : "text-[#7e30e1]"
-  }`;
+  const fullStyle =
+    "flex md:hidden justify-between items-center px-6 py-4 bg-[#12032f]/95 shadow-lg";
+
+  const linkStyle =
+    "hover:text-[#b364ff] transition duration-300 text-sm md:text-base";
 
   return (
-    <header className={headerClass}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-20">
-        {/* Logo */}
-        <Link href="/">
-          <div className={logoClass}>Obscurix</div>
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-8 text-sm font-medium items-center">
-          <button
-            onClick={() => handleScroll("hero")}
-            className="hover:text-[#7e30e1] transition duration-300"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => handleScroll("about")}
-            className="hover:text-[#7e30e1] transition duration-300"
-          >
-            About
-          </button>
-          <button
-            onClick={() => handleScroll("services")}
-            className="hover:text-[#7e30e1] transition duration-300"
-          >
-            Features
-          </button>
-          <Link href="/dashboard">
-            <button className="hover:text-[#7e30e1] transition duration-300">
-              Dashboard
-            </button>
+    <div className={wrapperStyle}>
+      {/* Oval Navbar for md+ screens */}
+      <header className="hidden md:flex justify-center">
+        <div className={ovalStyle}>
+          <Link href="/">
+            <div className="text-xl font-extrabold text-[#7e30e1] cursor-pointer">
+              Obscurix
+            </div>
           </Link>
-          <button
-            onClick={() => handleScroll("footer")}
-            className="hover:text-[#7e30e1] transition duration-300"
-          >
-            Contact
-          </button>
-        </nav>
-
-        {/* Mobile Toggle */}
-        <div className="md:hidden">
-          {!menuOpen && (
-            <button onClick={() => setMenuOpen(true)} aria-label="Open menu">
-              <Menu className="w-6 h-6 text-[#7e30e1]" />
+          <nav className="flex gap-6 text-white font-medium ml-10">
+            <button onClick={() => handleScroll("hero")} className={linkStyle}>
+              Home
             </button>
-          )}
+            <button onClick={() => handleScroll("news")} className={linkStyle}>
+              About
+            </button>
+            <Link href="/redactify">
+              <button className={linkStyle}>Redactify</button>
+            </Link>
+            <Link href="/dashboard">
+              <button className={linkStyle}>Dashboard</button>
+            </Link>
+            <button onClick={() => handleScroll("footer")} className={linkStyle}>
+              Contact
+            </button>
+          </nav>
         </div>
-      </div>
+      </header>
 
-      {/* Slide-in Fullscreen Mobile Menu */}
+      {/* Full-width Navbar for small screens */}
+      <header className={fullStyle}>
+        <Link href="/">
+          <div className="text-xl font-bold text-[#7e30e1]">Obscurix</div>
+        </Link>
+        <button onClick={() => setMenuOpen(true)} aria-label="Open menu">
+          <Menu className="w-6 h-6 text-white" />
+        </button>
+      </header>
+
+      {/* Mobile Slide Menu */}
       <div
-        className={`fixed inset-0 z-50 bg-[#0f0f1a] text-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-0 z-40 bg-[#0f0f1a]/95 text-white transform transition-transform duration-300 ease-in-out ${
           menuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex justify-between items-center px-6 py-5 border-b border-[#32214c]">
+        <div className="flex justify-between items-center px-6 py-5 border-b border-[#32214c] font-geist">
           <h2 className="text-xl font-bold text-[#7e30e1]">Menu</h2>
           <button onClick={() => setMenuOpen(false)} aria-label="Close menu">
             <X className="w-6 h-6 text-white" />
           </button>
         </div>
-        <nav className="flex flex-col gap-6 px-6 py-6 text-lg font-medium animate-slide-down">
+        <nav className="flex flex-col gap-6 px-6 py-10 text-lg font-medium font-geist">
           <button onClick={() => handleScroll("hero")}>Home</button>
-          <button onClick={() => handleScroll("about")}>About</button>
-          <button onClick={() => handleScroll("services")}>Services</button>
+          <button onClick={() => handleScroll("news")}>About</button>
+          <Link href="/redactify">
+            <button className="text-left">Redactify</button>
+          </Link>
           <Link href="/dashboard">
             <button className="text-left">Dashboard</button>
           </Link>
           <button onClick={() => handleScroll("footer")}>Contact</button>
         </nav>
       </div>
-    </header>
+    </div>
   );
 }
