@@ -20,7 +20,7 @@ const stats = [
 
 export default function News() {
   return (
-    <section className="bg-[#0a0a0a] text-white py-24 px-6 font-geist">
+    <section id="news" className="relative bg-[#0a0a0a] py-24 px-6 text-white font-geist">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         {/* Left: News Feed */}
         <div className="border border-[#333] bg-[#141414] rounded-2xl overflow-hidden shadow-xl">
