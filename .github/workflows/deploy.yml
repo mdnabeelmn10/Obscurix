@@ -1,5 +1,4 @@
-name: Deploy Backend to EC2
-
+name: Deploy to EC2
 on:
   push:
     branches:
@@ -7,23 +6,55 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2
+    name: SSH Deploy to EC2
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-      - name: Deploy to EC2 via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} "
-            cd ~/obscurix/backend && \
-            git pull origin main && \
-            source venv/bin/activate && \
-            sudo systemctl restart backend
-          "
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup SSH Key
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        
+    - name: Add SSH Known Hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy via SSH
+      run: |
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+        set -e  # Exit on any error
+        cd ~/obscurix/backend
+        
+        # Check if directory exists
+        if [ ! -d "~/obscurix/backend" ]; then
+          echo "Error: Directory ~/obscurix/backend does not exist"
+          exit 1
+        fi
+        
+        # Activate virtual environment
+        if [ -f "venv/bin/activate" ]; then
+          source venv/bin/activate
+        else
+          echo "Warning: Virtual environment not found"
+        fi
+        
+        # Pull latest changes
+        git pull origin main
+        
+        # Install/update requirements
+        pip install -r requirements.txt
+        
+        # Restart service
+        sudo systemctl restart gunicorn
+        
+        # Check if service started successfully
+        sudo systemctl is-active --quiet gunicorn || {
+          echo "Error: Gunicorn failed to start"
+          sudo systemctl status gunicorn
+          exit 1
+        }
+        
+        echo "Deployment completed successfully"
+        EOF
