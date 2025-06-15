@@ -1,13 +1,13 @@
-# Obscurix 🔒  
+# Obscurix   
 **Secure Communication & Redaction Platform with GenAI + OCR + PII Intelligence**
 
 Obscurix is a next-generation data redaction and content moderation platform designed to help teams and enterprises securely communicate and collaborate without risking sensitive data exposure. The chatbot interface, **Redactify**, enables users to interact naturally while ensuring compliance, privacy, and safety—powered by Generative AI and real-time monitoring.
 
 ---
 
-## 🔗 Live Demo  
-Frontend: ([Obscurix]https://obscurix.vercel.app/)  
-Backend: Hosted on [AWS EC2]((http://3.110.28.234/))
+##  Live Demo  
+Frontend: [Obscurix](https://obscurix.vercel.app)  
+Backend: Hosted on [AWS EC2](http://3.110.28.234)
 
 ---
 
@@ -144,6 +144,3 @@ python manage.py runserver
 
 ---
 
-##  License
-
-MIT License
